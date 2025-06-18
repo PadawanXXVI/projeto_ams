@@ -66,6 +66,8 @@ Análise exploratória com `pandas`, visualizações com `matplotlib`, e verific
 
 ---
 
+⚠️ Caso enfrente problemas ao instalar as dependências com `requirements.txt`, utilize a versão alternativa com dependências mais estáveis: `requirements_min.txt`.
+
 ## 🚀 Como executar localmente
 1. Clone o repositório:
 ```bash
