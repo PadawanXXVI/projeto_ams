@@ -5,12 +5,13 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
+from sklearn.neural_network import MLPClassifier
+from sklearn import svm
 
 # Fase 2 - Carregamento
-
 def carregar_dados(caminho):
     try:
         dados = pd.read_csv(caminho)
@@ -20,7 +21,6 @@ def carregar_dados(caminho):
         return None
 
 # Fase 3 - Preparacao
-
 def preparar_dados(df):
     df = df.drop_duplicates()
 
@@ -34,14 +34,12 @@ def preparar_dados(df):
     return df
 
 # Fase 3 - Visualização
-
 def visualizar_alvo(df):
     df['Class'].value_counts().plot(kind='bar', title="Distribuição da Classe Alvo (Risco de Evasão)")
     plt.xticks([0, 1], ['Sem risco', 'Risco'])
     plt.show()
 
 # Fase 4 - Modelagem
-
 def dividir_dados(df):
     X = df.drop("Class", axis=1)
     y = df["Class"]
@@ -51,13 +49,20 @@ def treinar_modelos(x_train, y_train):
     modelos = [
         RandomForestClassifier(n_estimators=100, random_state=42),
         LogisticRegression(max_iter=1000),
-        GaussianNB()
+        GaussianNB(),
+        svm.SVC(),
+        GradientBoostingClassifier(n_estimators=100),
+        MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(15,), max_iter=1000)
     ]
-    treinados = [modelo.fit(x_train, y_train) for modelo in modelos]
+    treinados = []
+    for modelo in modelos:
+        try:
+            treinados.append(modelo.fit(x_train, y_train))
+        except Exception as e:
+            print(f"Erro ao treinar {type(modelo).__name__}: {e}")
     return treinados
 
 # Fase 5 - Avaliação
-
 def avaliar_modelos(modelos, x_test, y_test):
     acuracias = [accuracy_score(y_test, modelo.predict(x_test)) for modelo in modelos]
     melhor_indice = np.argmax(acuracias)
@@ -66,7 +71,6 @@ def avaliar_modelos(modelos, x_test, y_test):
     return modelos[melhor_indice]
 
 # Fase 6 - Implantação
-
 def salvar_modelo(nome_arquivo, modelo):
     with open(nome_arquivo, 'wb') as file:
         pickle.dump(modelo, file)
