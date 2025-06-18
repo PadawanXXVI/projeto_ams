@@ -1,0 +1,7 @@
+# Requisitos mínimos para executar o projeto de classificação binária
+# Testado com Python 3.10+ ou 3.11+
+
+pandas>=1.5
+numpy>=1.21
+matplotlib>=3.5
+scikit-learn>=1.1
